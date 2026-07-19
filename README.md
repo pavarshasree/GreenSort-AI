@@ -1,109 +1,251 @@
-# GreenSort AI 🌿
+# 🌿 GreenSort AI
 
-AI-powered waste sorting assistant — upload a photo of an item and get instant guidance on how to dispose of it correctly. Built for Idea2Impact Hackathon 2026.
+> AI-Powered Smart Waste Segregation & Sustainability Assistant
 
-**Live pages included (MVP):**
-- `index.html` — Home
-- `scanner.html` — Waste Scanner (upload / camera / drag-drop)
-- `results.html` — AI Analysis Result
-- `chat.html` — AI Chat Assistant (bonus, follow-up questions)
-- `dashboard.html` — Impact Dashboard (Chart.js)
-- `learn.html` — Learn (bonus, category reference)
-- `about.html` — About
-- `report.html` — Downloadable/printable Sustainability Report
+GreenSort AI is a web application that helps users identify the correct disposal method for everyday waste items. Users can upload an image of a waste item, receive an AI-powered classification, learn whether it belongs to Wet, Dry, Recyclable, Hazardous, Organic, or E-Waste categories, and get eco-friendly disposal recommendations.
 
-No build step, no server, no dependencies to install — it's plain HTML/CSS/JS plus Chart.js loaded from a CDN.
+Built for the **Idea2Impact Hackathon 2026** under the **Clean & Green Technology** theme.
 
-## Run it locally
+---
 
-You can just double-click `index.html` — but for the camera/upload flow to behave consistently across browsers, serve it over a local server:
+## 🚀 Live Demo
 
-```bash
-# from inside the greensort-ai folder
-python3 -m http.server 8000
-# then open http://localhost:8000 in your browser
+🌐 **Website:**
+https://pavarshasree.github.io/greensort-ai/
+
+🎥 **Demo Video:**
+(Add your YouTube or Google Drive link here)
+
+---
+
+## 📂 GitHub Repository
+
+https://github.com/pavarshasree/greensort-ai
+
+---
+
+# 📌 Problem Statement
+
+Improper waste segregation is one of the major causes of environmental pollution. Most people struggle to identify the correct disposal method for different waste materials, causing recyclable and hazardous waste to end up in landfills.
+
+GreenSort AI simplifies waste segregation using AI by helping users correctly classify waste and promoting sustainable disposal practices.
+
+---
+
+# 💡 Solution
+
+GreenSort AI allows users to:
+
+- 📷 Upload or capture a waste item image
+- 🤖 Receive AI-powered waste classification
+- ♻️ View proper disposal instructions
+- 🌱 Learn sustainable recycling practices
+- 📊 Track environmental impact through a dashboard
+- 💬 Ask follow-up questions using the AI Chat Assistant
+- 📄 Generate a printable Sustainability Report
+
+---
+
+# ✨ Features
+
+- AI Waste Classification
+- Smart Disposal Recommendations
+- Waste Category Detection
+- Sustainability Dashboard
+- AI Chat Assistant
+- Learn Page
+- Printable Sustainability Report
+- Mobile Responsive UI
+- Dark Mode Support
+
+---
+
+# 🛠 Tech Stack
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript (ES6)
+
+### Libraries
+
+- Chart.js
+
+### Storage
+
+- LocalStorage
+
+### Deployment
+
+- GitHub Pages
+
+### Development Tools
+
+- GitHub
+- VS Code
+- Replit
+- ChatGPT
+
+---
+
+# 🧠 AI Architecture
+
+GreenSort AI uses a modular waste classification pipeline.
+
+Current MVP implementation uses a structured **rule-based AI simulation** through:
+
+- `WASTE_DB`
+- `mockClassify()`
+
+The pipeline predicts:
+
+- Waste Object
+- Material Type
+- Waste Category
+- Confidence Score
+- Disposal Recommendation
+
+Because the classification module is isolated, it can easily be upgraded in the future with:
+
+- TensorFlow
+- Teachable Machine
+- Roboflow
+- Gemini Vision API
+- OpenAI Vision API
+- YOLO
+- Custom CNN Models
+
+without changing the rest of the application.
+
+---
+
+# 📄 Project Pages
+
+| Page | Description |
+|-------|-------------|
+| Home | Landing Page |
+| Scanner | Upload or Capture Waste Image |
+| Results | AI Classification Result |
+| Chat | AI Sustainability Assistant |
+| Dashboard | Impact Analytics |
+| Learn | Waste Segregation Guide |
+| About | Project Information |
+| Report | Printable Sustainability Report |
+
+---
+
+# 📁 Project Structure
+
+```
+greensort-ai/
+│
+├── index.html
+├── scanner.html
+├── results.html
+├── dashboard.html
+├── chat.html
+├── learn.html
+├── about.html
+├── report.html
+│
+├── css/
+│   └── style.css
+│
+├── js/
+│   ├── main.js
+│   └── data.js
+│
+├── assets/
+│
+└── README.md
 ```
 
-Or with Node:
+---
+
+# ⚙️ Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/pavarshasree/greensort-ai.git
+```
+
+Move into the project folder:
+
+```bash
+cd greensort-ai
+```
+
+Run a local server:
+
+Python
+
+```bash
+python -m http.server 8000
+```
+
+or
+
+```bash
+python3 -m http.server 8000
+```
+
+Node.js
 
 ```bash
 npx serve .
 ```
 
-## How the "AI" currently works
-
-This MVP ships with a **mock classifier** (`js/data.js` → `mockClassify()`) so the entire flow — upload, analyze, results, dashboard, report — works end‑to‑end without needing a trained model or API key. It randomly selects a realistic result from a small waste knowledge base (`WASTE_DB`).
-
-To wire up a **real AI model**, replace `mockClassify()` with either:
-
-**Option A — your own trained image classifier**, called via `fetch()` to your inference endpoint.
-
-**Option B — the Anthropic API**, sending the uploaded image and asking for structured JSON back:
-
-```javascript
-async function classifyWithClaude(base64Image) {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: 500,
-      messages: [{
-        role: "user",
-        content: [
-          { type: "image", source: { type: "base64", media_type: "image/jpeg", data: base64Image } },
-          { type: "text", text: "Identify the waste item in this photo. Respond ONLY as JSON: {\"object\":\"\",\"material\":\"plastic|paper|glass|metal|organic|ewaste\",\"confidence\":0-100}" }
-        ]
-      }]
-    })
-  });
-  const data = await response.json();
-  return JSON.parse(data.content[0].text);
-}
-```
-
-Everything downstream (results page, dashboard stats, PDF report) already expects that shape, so it's a drop-in swap.
-
-## Publish it to GitHub (pavarshasree)
-
-From inside the `greensort-ai` folder:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: GreenSort AI MVP"
-git branch -M main
-git remote add origin https://github.com/pavarshasree/greensort-ai.git
-git push -u origin main
-```
-
-If the repo doesn't exist yet on GitHub:
-1. Go to https://github.com/new
-2. Repository name: `greensort-ai` (owner: pavarshasree)
-3. Leave it empty (no README/gitignore — you already have one), click **Create repository**
-4. Run the commands above
-
-## See it live (GitHub Pages)
-
-1. On GitHub, open the `greensort-ai` repo → **Settings** → **Pages**
-2. Under "Build and deployment", set **Source** to `Deploy from a branch`
-3. Branch: `main`, folder: `/ (root)` → **Save**
-4. Wait ~1 minute, then your site is live at:
-   `https://pavarshasree.github.io/greensort-ai/`
-
-## Project structure
+Open your browser:
 
 ```
-greensort-ai/
-├── index.html
-├── scanner.html
-├── results.html
-├── chat.html
-├── dashboard.html
-├── learn.html
-├── about.html
-├── report.html
-├── css/style.css
-├── js/main.js      # navbar, dark mode
-└── js/data.js       # waste knowledge base, mock classifier, stats
+http://localhost:8000
 ```
+
+---
+
+# 🌍 Future Enhancements
+
+- Real-time AI Image Recognition
+- Gemini Vision Integration
+- Voice-based Waste Assistant
+- QR Code Recycling Information
+- Nearby Recycling Center Finder
+- User Authentication
+- Carbon Footprint Tracking
+- Multi-language Support
+
+---
+
+# 🎯 Expected Impact
+
+GreenSort AI aims to:
+
+- Increase recycling awareness
+- Reduce landfill waste
+- Encourage responsible disposal
+- Improve household waste segregation
+- Support smart and sustainable cities
+
+---
+
+# 👩‍💻 Developer
+
+**Pavarsha Sree Devarapalli**
+
+GitHub:
+https://github.com/pavarshasree
+
+LinkedIn:
+https://www.linkedin.com/in/pavarsha-sree-devarapalli-a793aa341/
+
+---
+
+# 📜 License
+
+This project was developed for educational and hackathon purposes under the **Idea2Impact Hackathon 2026**.
+
+---
+
+⭐ If you found this project useful, please consider giving the repository a **Star**.
