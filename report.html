@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sustainability Report — GreenSort AI</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .report-card{max-width:720px;margin:40px auto;background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--radius);padding:40px;}
+  .report-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--forest);padding-bottom:18px;margin-bottom:24px;}
+  .report-head .brand{font-size:1.3rem;}
+  .report-meta{font-family:var(--mono);font-size:.78rem;color:var(--text-soft);text-align:right;}
+  .report-card img{border-radius:var(--radius-sm);max-height:260px;object-fit:contain;background:#00000010;margin-bottom:20px;}
+  @media print{
+    .navbar,.footer,.no-print{display:none!important;}
+    body{background:#fff;color:#000;}
+    .report-card{border:none;box-shadow:none;margin:0;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar no-print">
+  <div class="container">
+    <a href="index.html" class="brand"><span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>GreenSort AI</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="scanner.html">Scanner</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container no-print" style="padding-top:24px; display:flex; gap:12px;">
+  <button class="btn btn-primary" id="downloadPdf">📥 Download PDF</button>
+  <button class="btn btn-outline" onclick="window.print()">🖨 Print</button>
+  <button class="btn btn-outline" id="shareReport">📤 Share</button>
+</div>
+
+<div class="report-card" id="reportCard">
+  <div class="report-head">
+    <div class="brand"><span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>GreenSort AI</div>
+    <div class="report-meta">AI Sustainability Report<br><span id="reportDate">—</span></div>
+  </div>
+  <img id="reportImg" alt="Analyzed item">
+  <h2 id="reportTitle">—</h2>
+  <div class="kv-list">
+    <div class="kv-row"><span class="k">Material</span><span class="v" id="repMaterial">—</span></div>
+    <div class="kv-row"><span class="k">Confidence Score</span><span class="v" id="repConf">—</span></div>
+    <div class="kv-row"><span class="k">Waste Category</span><span class="v" id="repCategory">—</span></div>
+    <div class="kv-row"><span class="k">Disposal Method</span><span class="v" id="repDisposal" style="text-align:left; max-width:60%;">—</span></div>
+  </div>
+  <div class="result-block" style="margin-top:20px;">
+    <h3>🌍 Environmental Benefits</h3>
+    <p id="repBenefit">—</p>
+  </div>
+  <div class="result-block">
+    <h3>💡 Recycling Tips</h3>
+    <ul class="tip-list" id="repTips"></ul>
+  </div>
+  <div class="result-block">
+    <h3>🧠 AI Summary</h3>
+    <p id="repSummary">—</p>
+  </div>
+</div>
+
+<footer class="footer no-print">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 GreenSort AI</span>
+      <span>Built for Idea2Impact Hackathon 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const raw = sessionStorage.getItem("greensort_report_result") || sessionStorage.getItem("greensort_last_result");
+  const img = sessionStorage.getItem("greensort_report_image") || sessionStorage.getItem("greensort_last_image");
+
+  if (raw) {
+    const r = JSON.parse(raw);
+    document.getElementById("reportImg").src = img || "";
+    document.getElementById("reportTitle").textContent = r.object;
+    document.getElementById("repMaterial").textContent = MATERIAL_LABELS[r.material] || r.material;
+    document.getElementById("repConf").textContent = r.confidence + "%";
+    document.getElementById("repCategory").textContent = r.category;
+    document.getElementById("repDisposal").textContent = r.disposal;
+    document.getElementById("repBenefit").textContent = r.benefit;
+    document.getElementById("repTips").innerHTML = r.tips.map(t => `<li>${t}</li>`).join("");
+    document.getElementById("repSummary").textContent = r.explanation;
+    document.getElementById("reportDate").textContent = new Date().toLocaleString();
+  }
+
+  document.getElementById("downloadPdf").addEventListener("click", () => {
+    window.print(); // browser "Save as PDF" via print dialog — no extra dependency
+  });
+  document.getElementById("shareReport").addEventListener("click", async () => {
+    await navigator.clipboard.writeText(location.href);
+    alert("Report link copied to clipboard!");
+  });
+</script>
+</body>
+</html>

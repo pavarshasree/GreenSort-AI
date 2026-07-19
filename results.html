@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analysis Result — GreenSort AI</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="brand"><span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>GreenSort AI</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="scanner.html">Scanner</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="https://github.com/pavarshasree" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <span class="eyebrow">Analysis Complete</span>
+    <h1 id="pageTitle">Here's what GreenSort AI found</h1>
+  </div>
+</header>
+
+<section class="container results-grid" id="resultsGrid">
+  <!-- Left panel -->
+  <div class="result-panel">
+    <img id="resultImg" alt="Analyzed item">
+    <div class="kv-list">
+      <div class="kv-row"><span class="k">Detected Object</span><span class="v" id="kObject">—</span></div>
+      <div class="kv-row"><span class="k">Material</span><span class="v" id="kMaterial">—</span></div>
+      <div class="kv-row"><span class="k">Confidence Score</span><span class="v"><span class="confidence-bar"><div id="confFill"></div></span> <span id="confPct" class="mono"></span></span></div>
+      <div class="kv-row"><span class="k">Waste Category</span><span class="v" id="kCategory">—</span></div>
+      <div class="kv-row"><span class="k">Bin</span><span class="v"><span class="bin-swatch" id="binSwatch"></span><span id="kBin">—</span></span></div>
+    </div>
+    <div class="result-actions" style="margin-top:20px;">
+      <button class="btn btn-outline btn-sm" id="downloadBtn">📄 Download AI Report</button>
+      <button class="btn btn-outline btn-sm" id="shareBtn">📤 Share Result</button>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div>
+    <div class="result-block">
+      <h3>🧠 AI Explanation</h3>
+      <p id="rExplanation">—</p>
+    </div>
+    <div class="result-block">
+      <h3>♻️ Disposal Method</h3>
+      <p id="rDisposal">—</p>
+    </div>
+    <div class="result-block">
+      <h3>🌍 Environmental Benefit</h3>
+      <p id="rBenefit">—</p>
+    </div>
+    <div class="result-block">
+      <h3>💡 Sustainability Tips</h3>
+      <ul class="tip-list" id="rTips"></ul>
+    </div>
+    <div class="result-block">
+      <h3>⚠️ Common Mistakes</h3>
+      <ul class="tip-list" id="rMistakes"></ul>
+    </div>
+    <div class="result-block">
+      <h3>🔁 Similar Recyclable Items</h3>
+      <div class="chips" id="rSimilar"></div>
+    </div>
+    <div class="result-actions">
+      <a href="scanner.html" class="btn btn-primary">🔁 Analyze Another</a>
+      <a href="chat.html" class="btn btn-outline">💬 Ask AI</a>
+    </div>
+  </div>
+</section>
+
+<section class="container hidden" id="emptyState" style="padding:96px 0; text-align:center;">
+  <h2>No scan found</h2>
+  <p>Upload a photo first and we'll bring you straight back here with the results.</p>
+  <a href="scanner.html" class="btn btn-primary">🚀 Upload Waste Image</a>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 GreenSort AI</span>
+      <span>Built for Idea2Impact Hackathon 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const resultRaw = sessionStorage.getItem("greensort_last_result");
+  const imgRaw = sessionStorage.getItem("greensort_last_image");
+
+  if (!resultRaw) {
+    document.getElementById("resultsGrid").classList.add("hidden");
+    document.getElementById("emptyState").classList.remove("hidden");
+  } else {
+    const r = JSON.parse(resultRaw);
+    document.getElementById("resultImg").src = imgRaw || "";
+    document.getElementById("kObject").textContent = r.object;
+    document.getElementById("kMaterial").textContent = MATERIAL_LABELS[r.material] || r.material;
+    document.getElementById("kCategory").textContent = r.category;
+    document.getElementById("kBin").textContent = r.bin;
+    document.getElementById("binSwatch").style.background = r.binColor;
+    document.getElementById("confFill").style.width = r.confidence + "%";
+    document.getElementById("confPct").textContent = r.confidence + "%";
+    document.getElementById("rExplanation").textContent = r.explanation;
+    document.getElementById("rDisposal").textContent = r.disposal;
+    document.getElementById("rBenefit").textContent = r.benefit;
+    document.getElementById("rTips").innerHTML = r.tips.map(t => `<li>${t}</li>`).join("");
+    document.getElementById("rMistakes").innerHTML = r.mistakes.map(t => `<li>${t}</li>`).join("");
+    document.getElementById("rSimilar").innerHTML = r.similar.map(s => `<span class="chip">${s}</span>`).join("");
+    document.getElementById("pageTitle").textContent = `That's a ${r.object}`;
+
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      sessionStorage.setItem("greensort_report_result", resultRaw);
+      sessionStorage.setItem("greensort_report_image", imgRaw || "");
+      window.location.href = "report.html";
+    });
+
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const text = `GreenSort AI says my ${r.object} is ${r.category} — dispose via ${r.bin}.`;
+      if (navigator.share) {
+        try { await navigator.share({ title: "GreenSort AI Result", text }); } catch (e) {}
+      } else {
+        await navigator.clipboard.writeText(text);
+        alert("Result copied to clipboard!");
+      }
+    });
+  }
+</script>
+</body>
+</html>

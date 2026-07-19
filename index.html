@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenSort AI — Sort waste right, instantly</title>
+<meta name="description" content="Upload a photo of any item and let GreenSort AI tell you exactly how to dispose of it — recyclable, compostable, or hazardous.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+      GreenSort AI
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="scanner.html">Scanner</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="https://github.com/pavarshasree" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <div>
+      <span class="eyebrow">● Built for Idea2Impact Hackathon 2026</span>
+      <h1>Don't guess the bin. Just show it a photo.</h1>
+      <p class="lede">GreenSort AI identifies any item from a single photo and tells you exactly how to dispose of it — the material, the right bin, and the environmental impact of getting it right.</p>
+      <div class="hero-actions">
+        <a href="scanner.html" class="btn btn-primary">🚀 Upload Waste Image</a>
+        <a href="scanner.html?demo=1" class="btn btn-outline">▶ Try Demo</a>
+        <a href="https://github.com/pavarshasree" target="_blank" rel="noopener" class="btn btn-ghost">💻 View GitHub</a>
+      </div>
+      <p class="hero-note">No sign-up needed · Analysis runs in seconds · Works on any device</p>
+    </div>
+    <div class="bin-stack" aria-hidden="true">
+      <div class="falling" style="left:150px; animation-delay:0s;"></div>
+      <div class="falling" style="left:70px; animation-delay:.8s;"></div>
+      <div class="falling" style="left:230px; animation-delay:1.6s;"></div>
+      <div class="bin b1"><span>PLASTIC</span></div>
+      <div class="bin b2"><span>PAPER</span></div>
+      <div class="bin b3"><span>GLASS</span></div>
+      <div class="bin b4"><span>ORGANIC</span></div>
+      <div class="bin b5"><span>METAL</span></div>
+    </div>
+  </div>
+</header>
+
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="stat"><div class="num">6</div><div class="label">Material categories</div></div>
+    <div class="stat"><div class="num">&lt;3s</div><div class="label">Avg. analysis time</div></div>
+    <div class="stat"><div class="num">95%</div><div class="label">Energy saved recycling metal</div></div>
+    <div class="stat"><div class="num">1B+</div><div class="label">Tonnes waste mis-sorted yearly*</div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Why it matters</span>
+      <h2>Wrong-bin waste is a bigger problem than it looks</h2>
+      <p>Nearly a quarter of household recycling gets rejected at sorting facilities because of contamination and misclassification — most of it from simple, honest confusion about what goes where.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon" style="background:color-mix(in srgb, var(--plastic) 18%, transparent); color:var(--plastic);">📷</div>
+        <h3>Instant image recognition</h3>
+        <p>Snap or upload a photo — GreenSort AI detects the object and material in seconds, no manual lookup required.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon" style="background:color-mix(in srgb, var(--organic) 18%, transparent); color:var(--organic);">🗑</div>
+        <h3>The exact right bin</h3>
+        <p>Get a clear, color-coded answer — recyclable, compostable, or hazardous — with the correct bin for your item.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon" style="background:color-mix(in srgb, var(--amber) 20%, transparent); color:var(--amber-dark);">🌍</div>
+        <h3>See your real impact</h3>
+        <p>Every scan adds to your personal dashboard: CO₂ saved, energy saved, and your growing eco score.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--bg-raised); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From photo to disposal plan in four steps</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="num">01</span><h3>Upload</h3><p>Drag a photo in, browse a file, or use your camera.</p></div>
+      <div class="step"><span class="num">02</span><h3>Analyze</h3><p>The model detects the object, material, and confidence score.</p></div>
+      <div class="step"><span class="num">03</span><h3>Understand</h3><p>Read the disposal method, benefits, and common mistakes to avoid.</p></div>
+      <div class="step"><span class="num">04</span><h3>Track</h3><p>Your scan is logged to your dashboard so impact adds up over time.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container about-mini">
+    <div>
+      <span class="eyebrow">About GreenSort AI</span>
+      <h2>A hackathon project with a real-world job to do</h2>
+      <p>GreenSort AI was built to remove the single biggest barrier to good recycling: not knowing what a thing is actually made of. It pairs a lightweight image classifier with a plain-language disposal guide, so the right answer is always one photo away.</p>
+      <div class="badges">
+        <span class="badge">Computer Vision</span>
+        <span class="badge">Sustainability</span>
+        <span class="badge">Idea2Impact 2026</span>
+      </div>
+      <div class="hero-actions" style="margin-top:24px;">
+        <a href="about.html" class="btn btn-outline">📖 Learn More</a>
+      </div>
+    </div>
+    <div class="feature-card">
+      <h3 class="mt-0">What GreenSort AI reads per scan</h3>
+      <ul style="padding-left:20px; color:var(--text-soft); font-size:.92rem; line-height:1.9;">
+        <li>Detected object + material</li>
+        <li>Confidence score</li>
+        <li>Correct disposal bin</li>
+        <li>Environmental benefit of sorting correctly</li>
+        <li>Common mistakes people make with this item</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="brand" style="margin-bottom:12px;">
+          <span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+          GreenSort AI
+        </a>
+        <p style="max-width:32ch;">Photo in, right bin out. Built to make correct recycling effortless.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="scanner.html">Scanner</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="learn.html">Learn</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Project</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="about.html#privacy">Privacy Policy</a></li>
+          <li><a href="about.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Elsewhere</h4>
+        <ul>
+          <li><a href="https://github.com/pavarshasree" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="mailto:hello@example.com">Email</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 GreenSort AI</span>
+      <span>Built for Idea2Impact Hackathon 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

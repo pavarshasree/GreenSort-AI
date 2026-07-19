@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — GreenSort AI</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="brand"><span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>GreenSort AI</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="scanner.html">Scanner</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="https://github.com/pavarshasree" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container dash-toolbar">
+    <div>
+      <span class="eyebrow">Your Impact</span>
+      <h1 style="margin-bottom:0;">Dashboard</h1>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn btn-outline btn-sm" id="refreshBtn">🔄 Refresh Dashboard</button>
+      <button class="btn btn-ghost btn-sm" id="exportBtn">📥 Export Report</button>
+    </div>
+  </div>
+</header>
+
+<section class="container">
+  <div class="dash-cards">
+    <div class="dash-card"><div class="label">Total Scans</div><div class="value" id="cTotal">0</div><div class="delta">All time</div></div>
+    <div class="dash-card"><div class="label">Items Recycled</div><div class="value" id="cRecycled">0</div><div class="delta">Correctly sorted</div></div>
+    <div class="dash-card"><div class="label">CO₂ Saved</div><div class="value" id="cCo2">0 kg</div><div class="delta">Estimated</div></div>
+    <div class="dash-card"><div class="label">Energy Saved</div><div class="value" id="cEnergy">0 kWh</div><div class="delta">Estimated</div></div>
+    <div class="dash-card"><div class="label">Eco Score</div><div class="value" id="cEco">0</div><div class="delta">out of 100</div></div>
+  </div>
+
+  <div class="dash-charts">
+    <div class="chart-card">
+      <h3>Weekly Activity</h3>
+      <canvas id="weeklyChart" height="180"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Waste Distribution</h3>
+      <canvas id="distChart" height="180"></canvas>
+    </div>
+    <div class="chart-card wide">
+      <h3>Category Breakdown</h3>
+      <canvas id="breakdownChart" height="110"></canvas>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 GreenSort AI</span>
+      <span>Built for Idea2Impact Hackathon 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  let weeklyChart, distChart, breakdownChart;
+
+  function themeColors() {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    return { text: dark ? "#AEC0AD" : "#4A594E", grid: dark ? "#243A2C" : "#D8D8C6" };
+  }
+
+  const materialColors = {
+    plastic: "#3E7CB1", paper: "#C9A227", glass: "#2E9E8C",
+    metal: "#8A8F98", organic: "#6B8E23", ewaste: "#8E5FBF"
+  };
+
+  function renderCards(stats) {
+    document.getElementById("cTotal").textContent = stats.totalScans;
+    document.getElementById("cRecycled").textContent = stats.itemsRecycled;
+    document.getElementById("cCo2").textContent = stats.co2Saved.toFixed(1) + " kg";
+    document.getElementById("cEnergy").textContent = stats.energySaved.toFixed(1) + " kWh";
+    document.getElementById("cEco").textContent = stats.ecoScore;
+  }
+
+  function renderCharts(stats) {
+    const { text, grid } = themeColors();
+    const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+    if (weeklyChart) weeklyChart.destroy();
+    weeklyChart = new Chart(document.getElementById("weeklyChart"), {
+      type: "bar",
+      data: { labels: days, datasets: [{ data: stats.weekly, backgroundColor: "#E2871B", borderRadius: 6, maxBarThickness: 34 }] },
+      options: { plugins: { legend: { display: false } },
+        scales: { x: { ticks: { color: text }, grid: { display: false } }, y: { ticks: { color: text }, grid: { color: grid } } } }
+    });
+
+    const distLabels = Object.keys(stats.byMaterial).filter(k => stats.byMaterial[k] > 0);
+    const distData = distLabels.map(k => stats.byMaterial[k]);
+    if (distChart) distChart.destroy();
+    distChart = new Chart(document.getElementById("distChart"), {
+      type: "doughnut",
+      data: {
+        labels: distLabels.length ? distLabels.map(l => MATERIAL_LABELS[l]) : ["No scans yet"],
+        datasets: [{ data: distData.length ? distData : [1], backgroundColor: distLabels.length ? distLabels.map(l => materialColors[l]) : [grid], borderWidth: 0 }]
+      },
+      options: { plugins: { legend: { position: "bottom", labels: { color: text, boxWidth: 12, font: { size: 11 } } } } }
+    });
+
+    if (breakdownChart) breakdownChart.destroy();
+    breakdownChart = new Chart(document.getElementById("breakdownChart"), {
+      type: "bar",
+      data: {
+        labels: Object.keys(MATERIAL_LABELS).map(k => MATERIAL_LABELS[k]),
+        datasets: [{ data: Object.keys(MATERIAL_LABELS).map(k => stats.byMaterial[k] || 0),
+          backgroundColor: Object.keys(MATERIAL_LABELS).map(k => materialColors[k]), borderRadius: 6, maxBarThickness: 46 }]
+      },
+      options: { indexAxis: "y", plugins: { legend: { display: false } },
+        scales: { x: { ticks: { color: text }, grid: { color: grid } }, y: { ticks: { color: text }, grid: { display: false } } } }
+    });
+  }
+
+  function loadDashboard() {
+    const stats = getStats();
+    renderCards(stats);
+    renderCharts(stats);
+  }
+
+  document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
+  document.getElementById("exportBtn").addEventListener("click", () => {
+    const stats = getStats();
+    const blob = new Blob([JSON.stringify(stats, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "greensort-report.json"; a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById("themeToggle").addEventListener("click", () => setTimeout(loadDashboard, 50));
+
+  loadDashboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scanner — GreenSort AI</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="brand"><span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>GreenSort AI</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="scanner.html">Scanner</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="https://github.com/pavarshasree" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <span class="eyebrow">Waste Scanner</span>
+    <h1>Upload a photo, get an instant read</h1>
+    <p style="max-width:56ch;">JPG, PNG, or WEBP up to 10MB. For best results, photograph the item on a plain background with good lighting.</p>
+  </div>
+</header>
+
+<section class="scanner-wrap">
+  <div class="container" style="max-width:760px;">
+
+    <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload an image">
+      <div class="dz-icon">📤</div>
+      <h3>Drag & drop your image here</h3>
+      <p>or use one of the options below</p>
+      <div class="dz-actions">
+        <button class="btn btn-primary" id="browseBtn">📂 Browse Files</button>
+        <button class="btn btn-outline" id="cameraBtn">📷 Use Camera</button>
+      </div>
+      <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp">
+      <input type="file" id="cameraInput" accept="image/*" capture="environment">
+      <div class="dz-meta">Supported: JPG · PNG · WEBP &nbsp;|&nbsp; Max size: 10MB</div>
+    </div>
+
+    <div class="preview-card" id="previewCard">
+      <img id="previewImg" alt="Uploaded item preview">
+      <div class="preview-meta">
+        <span id="fileMeta">—</span>
+        <button class="btn btn-sm btn-danger" id="removeBtn">🗑 Remove Image</button>
+      </div>
+      <div class="preview-actions">
+        <button class="btn btn-primary btn-full" id="analyzeBtn">🤖 Analyze with AI</button>
+      </div>
+    </div>
+
+    <div class="analyzing" id="analyzing">
+      <p id="analyzingText">Detecting material composition…</p>
+      <div class="scan-bar"><div id="scanBarFill"></div></div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 GreenSort AI</span>
+      <span>Built for Idea2Impact Hackathon 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const dropzone = document.getElementById("dropzone");
+  const fileInput = document.getElementById("fileInput");
+  const cameraInput = document.getElementById("cameraInput");
+  const browseBtn = document.getElementById("browseBtn");
+  const cameraBtn = document.getElementById("cameraBtn");
+  const previewCard = document.getElementById("previewCard");
+  const previewImg = document.getElementById("previewImg");
+  const fileMeta = document.getElementById("fileMeta");
+  const removeBtn = document.getElementById("removeBtn");
+  const analyzeBtn = document.getElementById("analyzeBtn");
+  const analyzing = document.getElementById("analyzing");
+  const analyzingText = document.getElementById("analyzingText");
+  const scanBarFill = document.getElementById("scanBarFill");
+
+  let currentDataUrl = null;
+
+  browseBtn.addEventListener("click", () => fileInput.click());
+  cameraBtn.addEventListener("click", () => cameraInput.click());
+  dropzone.addEventListener("click", (e) => { if (e.target === dropzone) fileInput.click(); });
+  dropzone.addEventListener("keydown", (e) => { if (e.key === "Enter") fileInput.click(); });
+
+  ["dragenter","dragover"].forEach(evt =>
+    dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add("drag"); }));
+  ["dragleave","drop"].forEach(evt =>
+    dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove("drag"); }));
+  dropzone.addEventListener("drop", e => {
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  fileInput.addEventListener("change", e => e.target.files[0] && handleFile(e.target.files[0]));
+  cameraInput.addEventListener("change", e => e.target.files[0] && handleFile(e.target.files[0]));
+
+  function handleFile(file) {
+    if (!file.type.startsWith("image/")) { alert("Please upload an image file."); return; }
+    if (file.size > 10 * 1024 * 1024) { alert("File too large — please keep it under 10MB."); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      currentDataUrl = e.target.result;
+      previewImg.src = currentDataUrl;
+      fileMeta.textContent = `${file.name} · ${(file.size / 1024).toFixed(0)} KB`;
+      previewCard.classList.add("show");
+      dropzone.style.display = "none";
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeBtn.addEventListener("click", () => {
+    currentDataUrl = null;
+    previewCard.classList.remove("show");
+    dropzone.style.display = "block";
+    fileInput.value = ""; cameraInput.value = "";
+  });
+
+  const analysisSteps = [
+    "Detecting object boundaries…",
+    "Estimating material composition…",
+    "Matching against waste categories…",
+    "Calculating confidence score…",
+    "Preparing disposal guidance…"
+  ];
+
+  analyzeBtn.addEventListener("click", () => {
+    if (!currentDataUrl) return;
+    previewCard.classList.remove("show");
+    analyzing.classList.add("show");
+    let step = 0, pct = 0;
+    const interval = setInterval(() => {
+      pct += 100 / analysisSteps.length;
+      scanBarFill.style.width = Math.min(pct, 100) + "%";
+      analyzingText.textContent = analysisSteps[Math.min(step, analysisSteps.length - 1)];
+      step++;
+      if (pct >= 100) {
+        clearInterval(interval);
+        const result = mockClassify();
+        recordScan(result);
+        sessionStorage.setItem("greensort_last_image", currentDataUrl);
+        sessionStorage.setItem("greensort_last_result", JSON.stringify(result));
+        setTimeout(() => { window.location.href = "results.html"; }, 350);
+      }
+    }, 420);
+  });
+
+  // ?demo=1 auto-loads a sample so "Try Demo" works without a real photo
+  if (new URLSearchParams(location.search).get("demo") === "1") {
+    fileMeta.textContent = "demo-sample.jpg · 128 KB";
+    currentDataUrl = "data:image/svg+xml;utf8," + encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='400' height='300' fill='%23EFF0E2'/><text x='50%' y='50%' font-family='sans-serif' font-size='20' fill='%2314301F' text-anchor='middle'>Demo Item</text></svg>`
+    );
+    previewImg.src = currentDataUrl;
+    previewCard.classList.add("show");
+    dropzone.style.display = "none";
+  }
+</script>
+</body>
+</html>

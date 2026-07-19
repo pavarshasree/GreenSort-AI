@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask AI — GreenSort AI</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="brand"><span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>GreenSort AI</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="scanner.html">Scanner</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="https://github.com/pavarshasree" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <span class="eyebrow">AI Chat Assistant</span>
+    <h1>Ask a follow-up</h1>
+    <p style="max-width:56ch;">Got questions about your last scan, or waste sorting in general? Ask away.</p>
+  </div>
+</header>
+
+<section class="container chat-wrap">
+  <aside class="suggested">
+    <h4>Suggested Questions</h4>
+    <div class="suggested-list">
+      <button data-q="Can I recycle this?">Can I recycle this?</button>
+      <button data-q="Why isn't it recyclable?">Why isn't it recyclable?</button>
+      <button data-q="What products can it become?">What products can it become?</button>
+      <button data-q="Is this hazardous?">Is this hazardous?</button>
+      <button data-q="How should I clean it?">How should I clean it?</button>
+    </div>
+  </aside>
+
+  <div class="chat-panel">
+    <div class="chat-log" id="chatLog"></div>
+    <div class="chat-input-row">
+      <button class="btn btn-ghost btn-sm" id="clearBtn" title="Clear chat">🗑</button>
+      <input type="text" id="chatInput" placeholder="Ask about your last scan…" autocomplete="off">
+      <button class="btn btn-primary btn-sm" id="sendBtn">➤ Send</button>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 GreenSort AI</span>
+      <span>Built for Idea2Impact Hackathon 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const chatLog = document.getElementById("chatLog");
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const clearBtn = document.getElementById("clearBtn");
+
+  const lastResult = JSON.parse(sessionStorage.getItem("greensort_last_result") || "null");
+
+  function addMsg(text, who) {
+    const div = document.createElement("div");
+    div.className = "msg " + who;
+    div.textContent = text;
+    chatLog.appendChild(div);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  function greet() {
+    if (lastResult) {
+      addMsg(`Hi! I saw you just scanned a ${lastResult.object} (${lastResult.category}). Ask me anything about it, or about waste sorting in general.`, "bot");
+    } else {
+      addMsg("Hi! I'm the GreenSort AI assistant. Scan an item first, or just ask me a general recycling question.", "bot");
+    }
+  }
+
+  /**
+   * Rule-based demo responses grounded in the last scan.
+   * Swap this for a real call to the Anthropic API with the
+   * scan context in the system prompt — see README.md.
+   */
+  function respond(question) {
+    const q = question.toLowerCase();
+    const item = lastResult;
+
+    if (q.includes("recycl") && q.includes("can i")) {
+      if (!item) return "Scan an item first and I can give you a specific answer — for now: check the material code and your local facility's accepted list.";
+      return item.category.includes("Recyclable")
+        ? `Yes — your ${item.object} is recyclable. ${item.disposal}`
+        : `Not through standard recycling — your ${item.object} is classified as "${item.category}". ${item.disposal}`;
+    }
+    if (q.includes("why") && q.includes("recyclable")) {
+      if (!item) return "Tell me which item you mean, or scan one so I have the details.";
+      return item.category.includes("Recyclable")
+        ? `Good news — it actually is recyclable! ${item.explanation}`
+        : `${item.explanation} That's why it needs different handling than standard recycling.`;
+    }
+    if (q.includes("product") || q.includes("become")) {
+      if (!item) return "Scan an item and I'll tell you what it can be turned into.";
+      return `Recycled ${MATERIAL_LABELS[item.material] || item.material.toLowerCase()} like this typically becomes: ${item.similar.join(", ")}, or new packaging of the same material.`;
+    }
+    if (q.includes("hazard")) {
+      if (!item) return "Scan an item and I'll flag whether it needs special handling.";
+      return item.category.includes("Hazardous")
+        ? `Yes — treat this as hazardous. ${item.disposal}`
+        : `No, your ${item.object} isn't hazardous — it's classified as "${item.category}".`;
+    }
+    if (q.includes("clean")) {
+      if (!item) return "Generally: rinse food residue off plastics, glass, and metal before recycling. Paper should stay dry.";
+      return `For your ${item.object}: ${item.disposal}`;
+    }
+    return item
+      ? `Here's what I know about your ${item.object}: ${item.explanation}`
+      : "I can answer questions about recyclability, disposal methods, and environmental impact — scan an item first for item-specific answers.";
+  }
+
+  function handleSend(text) {
+    const question = (text || chatInput.value).trim();
+    if (!question) return;
+    addMsg(question, "user");
+    chatInput.value = "";
+    setTimeout(() => addMsg(respond(question), "bot"), 450);
+  }
+
+  sendBtn.addEventListener("click", () => handleSend());
+  chatInput.addEventListener("keydown", e => { if (e.key === "Enter") handleSend(); });
+  document.querySelectorAll(".suggested-list button").forEach(btn =>
+    btn.addEventListener("click", () => handleSend(btn.dataset.q)));
+  clearBtn.addEventListener("click", () => { chatLog.innerHTML = ""; greet(); });
+
+  greet();
+</script>
+</body>
+</html>

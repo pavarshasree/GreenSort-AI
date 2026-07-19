@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — GreenSort AI</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="brand"><span class="dot-row"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>GreenSort AI</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="scanner.html">Scanner</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="https://github.com/pavarshasree" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <span class="eyebrow">About</span>
+    <h1>What GreenSort AI is, and why it exists</h1>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container" style="max-width:820px;">
+
+    <div class="result-block">
+      <h3>📋 Project Overview</h3>
+      <p>GreenSort AI is a web app that identifies waste items from a photo and tells the user exactly how to dispose of them — the right bin, the environmental payoff, and the mistakes to avoid. It was built for the Idea2Impact Hackathon 2026.</p>
+    </div>
+
+    <div class="result-block">
+      <h3>❓ Problem Statement</h3>
+      <p>Most recycling contamination isn't malicious — it's confusion. People don't know whether a lined coffee cup is paper or plastic, whether a black tray is recyclable, or where a dead battery belongs. That uncertainty causes entire batches of good recycling to be rejected at sorting facilities. GreenSort AI removes the guesswork by turning "what is this?" into a one-photo question.</p>
+    </div>
+
+    <div class="result-block">
+      <h3>⚙️ AI Workflow</h3>
+      <ol style="padding-left:20px; color:var(--text-soft);">
+        <li>User uploads or captures a photo of an item.</li>
+        <li>The image is passed to a classification model, which returns the detected object, material, and a confidence score.</li>
+        <li>The material is matched against a disposal knowledge base (category, correct bin, benefits, common mistakes).</li>
+        <li>Results render instantly, get logged to the user's dashboard, and can be exported as a shareable report.</li>
+      </ol>
+      <p style="margin-top:10px; font-size:.86rem;">This MVP ships with a rule-based mock classifier so the full flow works end-to-end without a trained model. It's built as a drop-in slot — see <code>js/data.js</code> — for a real computer-vision model or a multimodal call to the Anthropic API.</p>
+    </div>
+
+    <div class="result-block">
+      <h3>🛠 Technologies Used</h3>
+      <div class="chips">
+        <span class="chip">HTML5 / CSS3</span>
+        <span class="chip">Vanilla JavaScript</span>
+        <span class="chip">Chart.js</span>
+        <span class="chip">LocalStorage (persistence)</span>
+        <span class="chip">Anthropic API (planned)</span>
+      </div>
+    </div>
+
+    <div class="result-block">
+      <h3>🚀 Future Scope</h3>
+      <ul style="padding-left:20px; color:var(--text-soft);">
+        <li>Swap the mock classifier for a trained image model or the Anthropic API.</li>
+        <li>Location-aware disposal rules (recycling guidelines vary by city).</li>
+        <li>Account sync so dashboard stats persist across devices.</li>
+        <li>Bulk / multi-item detection in a single photo.</li>
+      </ul>
+    </div>
+
+    <div class="result-block">
+      <h3>👤 Built by</h3>
+      <p>A solo build for Idea2Impact Hackathon 2026.</p>
+      <div class="result-actions">
+        <a href="https://github.com/pavarshasree" target="_blank" rel="noopener" class="btn btn-outline">💻 GitHub</a>
+        <a href="https://github.com/pavarshasree/greensort-ai#readme" target="_blank" rel="noopener" class="btn btn-outline">📄 Documentation</a>
+        <a href="mailto:hello@example.com" class="btn btn-outline" id="contact">📧 Contact</a>
+      </div>
+    </div>
+
+    <div class="result-block" id="privacy">
+      <h3>🔒 Privacy Policy</h3>
+      <p style="font-size:.86rem;">This MVP processes images entirely in your browser session — nothing is uploaded to a server. Dashboard stats are stored only in your browser's local storage and never leave your device.</p>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 GreenSort AI</span>
+      <span>Built for Idea2Impact Hackathon 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
